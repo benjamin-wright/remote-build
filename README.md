@@ -10,7 +10,7 @@ Client:
 Operator:
 - Watches for CRs and deploys buildkit single-replica statefulset and proxy pods
 
-QueueProxy:
+Router:
 - holds incoming build TCP connections and scales up buildkit pod when a build comes in
 - passes through the TCP connection when the buildkit pod is alive
 - reprograms virtualservice to forward requests directly to buildkit when running
