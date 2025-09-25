@@ -2,7 +2,10 @@ module pongle-hub.co.uk/remote-build
 
 go 1.25.1
 
-require k8s.io/client-go v0.34.1
+require (
+	github.com/gin-gonic/gin v1.11.0
+	k8s.io/client-go v0.34.1
+)
 
 require (
 	github.com/bytedance/sonic v1.14.0 // indirect
@@ -12,7 +15,6 @@ require (
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
-	github.com/gin-gonic/gin v1.11.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect

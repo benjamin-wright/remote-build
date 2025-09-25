@@ -1,6 +1,6 @@
 package k8s
 
-import "pongle-hub.co.uk/remote-build/internal/model"
+import "pongle-hub.co.uk/remote-build/cmd/operator/internal/model"
 
 type StatefulSetWatcher interface {
 	Added(set model.StatefulSet)

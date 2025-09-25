@@ -8,12 +8,13 @@ import (
 )
 
 func main() {
+	serve(context.Background())
 }
 
 func serve(ctx context.Context) <-chan error {
 	router := gin.Default()
 
-	router.GET("/metrics", handlers.PostMetricsHandler(client, cfg))
+	// router.GET("/metrics", handlers.PostMetricsHandler(client, cfg))
 
 	srv := &http.Server{
 		Addr:    "0.0.0.0:8080",
