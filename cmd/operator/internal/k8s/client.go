@@ -4,13 +4,15 @@ import (
 	"os"
 
 	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 type Client struct {
-	client *dynamic.DynamicClient
-	labels map[string]string
+	client        *dynamic.DynamicClient
+	clientset     *kubernetes.Clientset
+	labelSelector string
 }
 
 func NewClient(labels map[string]string) (*Client, error) {
@@ -35,8 +37,22 @@ func NewClient(labels map[string]string) (*Client, error) {
 		return nil, err
 	}
 
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
+	labelSelector := ""
+	for key, value := range labels {
+		if labelSelector != "" {
+			labelSelector += ","
+		}
+		labelSelector += key + "=" + value
+	}
+
 	return &Client{
-		client: dynClient,
-		labels: labels,
+		client:        dynClient,
+		clientset:     clientset,
+		labelSelector: labelSelector,
 	}, nil
 }
