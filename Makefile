@@ -5,7 +5,7 @@ cluster:
 		--servers 1 \
 		--agents 0 \
 		--k3s-arg "--disable=traefik@server:*" \
-		--registry-create remote-build-registry:5000 \
+		--registry-create remote-build-registry:5001 \
 		--port "8080:8080@server:0" \
 		--kubeconfig-update-default=false \
 		--wait

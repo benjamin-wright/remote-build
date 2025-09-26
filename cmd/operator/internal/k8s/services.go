@@ -7,21 +7,24 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/informers"
-	"k8s.io/client-go/tools/cache"
 	"pongle-hub.co.uk/remote-build/cmd/operator/internal/model"
 )
 
-type ServiceWatcher struct {
-	Added   func(service model.Service)
-	Updated func(old model.Service, new model.Service)
-	Deleted func(service model.Service)
+func anyToService(obj any) model.Service {
+	svc := obj.(*corev1.Service)
+
+	// Convert the obj to model.Service
+	return model.Service{
+		Name:      svc.Name,
+		Namespace: svc.Namespace,
+	}
 }
 
-func (c *Client) WatchServices(ctx context.Context, watcher ServiceWatcher) <-chan error {
-	errCh := make(chan error)
+func (c *Client) WatchServices(ctx context.Context) *Watcher[model.Service] {
+	watcher := NewWatcher(anyToService)
 
 	go func() {
-		defer close(errCh)
+		defer close(watcher.done)
 		informer := informers.NewSharedInformerFactoryWithOptions(
 			c.clientset,
 			time.Second*30,
@@ -30,36 +33,9 @@ func (c *Client) WatchServices(ctx context.Context, watcher ServiceWatcher) <-ch
 			}),
 		).Core().V1().Services().Informer()
 
-		informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-			AddFunc: func(svc any) {
-				new := svc.(*corev1.Service)
-
-				watcher.Added(model.Service{
-					Name:      new.Name,
-					Namespace: new.Namespace,
-				})
-			},
-			UpdateFunc: func(svc1 any, svc2 any) {
-				old := svc1.(*corev1.Service)
-				new := svc2.(*corev1.Service)
-
-				watcher.Updated(model.Service{
-					Name:      new.Name,
-					Namespace: new.Namespace,
-				}, model.Service{
-					Name:      old.Name,
-					Namespace: old.Namespace,
-				})
-			},
-			DeleteFunc: func(svc any) {
-				cast := svc.(*corev1.Service)
-				watcher.Deleted(model.Service{
-					Name:      cast.Name,
-					Namespace: cast.Namespace,
-				})
-			},
-		})
+		informer.AddEventHandler(watcher.GetEventHandler())
+		informer.Run(ctx.Done())
 	}()
 
-	return errCh
+	return watcher
 }

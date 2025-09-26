@@ -1,0 +1,11 @@
+apiVersion: remote-build.pongle-hub.co.uk/v1alpha1
+kind: BuildInstance
+metadata:
+  name: example-buildinstance
+  labels:
+    app.kubernetes.io/managed-by: remote-build-operator
+spec:
+  cpu: "3"
+  memory: "512Mi"
+  disk: "1Gi"
+  image: "moby/buildkit:master-rootless"

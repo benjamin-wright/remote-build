@@ -10,3 +10,7 @@ type BuildInstance struct {
 	State     string
 	Active    bool
 }
+
+func (b BuildInstance) Equal(old BuildInstance) bool {
+	return b == old
+}

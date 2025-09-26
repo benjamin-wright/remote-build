@@ -9,3 +9,7 @@ type StatefulSet struct {
 	Image     string
 	Ready     bool
 }
+
+func (s StatefulSet) Equal(old StatefulSet) bool {
+	return s == old
+}
