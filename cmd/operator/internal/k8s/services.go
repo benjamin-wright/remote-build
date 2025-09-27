@@ -39,3 +39,29 @@ func (c *Client) WatchServices(ctx context.Context) *Watcher[model.Service] {
 
 	return watcher
 }
+
+func (c *Client) CreateService(ctx context.Context, svc *model.Service) error {
+	_, err := c.clientset.CoreV1().Services(svc.Namespace).Create(ctx, &corev1.Service{
+		ObjectMeta: v1.ObjectMeta{
+			Name:      svc.Name,
+			Namespace: svc.Namespace,
+			Labels:    c.labels,
+		},
+		Spec: corev1.ServiceSpec{
+			Selector: map[string]string{
+				"app": svc.Name,
+			},
+			Ports: []corev1.ServicePort{
+				{
+					Port: 1234,
+				},
+			},
+			Type: corev1.ServiceTypeLoadBalancer,
+		},
+	}, v1.CreateOptions{})
+	return err
+}
+
+func (c *Client) DeleteService(ctx context.Context, svc *model.Service) error {
+	return c.clientset.CoreV1().Services(svc.Namespace).Delete(ctx, svc.Name, v1.DeleteOptions{})
+}

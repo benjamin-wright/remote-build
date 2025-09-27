@@ -13,6 +13,7 @@ type Client struct {
 	client        *dynamic.DynamicClient
 	clientset     *kubernetes.Clientset
 	labelSelector string
+	labels        map[string]string
 }
 
 func NewClient(labels map[string]string) (*Client, error) {
@@ -54,5 +55,6 @@ func NewClient(labels map[string]string) (*Client, error) {
 		client:        dynClient,
 		clientset:     clientset,
 		labelSelector: labelSelector,
+		labels:        labels,
 	}, nil
 }

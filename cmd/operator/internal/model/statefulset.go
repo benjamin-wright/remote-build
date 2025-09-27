@@ -11,5 +11,14 @@ type StatefulSet struct {
 }
 
 func (s StatefulSet) Equal(old StatefulSet) bool {
-	return s == old
+	return s.Name == old.Name &&
+		s.Namespace == old.Namespace &&
+		s.CPU == old.CPU &&
+		s.Memory == old.Memory &&
+		s.Disk == old.Disk &&
+		s.Image == old.Image
+}
+
+func (s StatefulSet) ID() string {
+	return s.Namespace + "/" + s.Name
 }

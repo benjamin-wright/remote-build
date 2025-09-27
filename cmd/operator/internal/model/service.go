@@ -8,3 +8,7 @@ type Service struct {
 func (s Service) Equal(old Service) bool {
 	return s == old
 }
+
+func (s Service) ID() string {
+	return s.Namespace + "/" + s.Name
+}

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 
+	"pongle-hub.co.uk/remote-build/cmd/operator/internal/controller"
 	"pongle-hub.co.uk/remote-build/cmd/operator/internal/k8s"
 )
 
@@ -15,18 +16,22 @@ func main() {
 	)))
 
 	slog.Info("Starting operator...")
-
 	client, err := k8s.NewClient(map[string]string{
-		"app.kubernetes.io/managed-by": "remote-build-operator",
+		"app.kubernetes.io/managed-by": "remote-build",
 	})
-
 	if err != nil {
-		panic(err)
+		slog.Error("Failed to create k8s client", "error", err)
+		os.Exit(1)
 	}
 
-	instanceWatcher := client.WatchBuildInstances(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
+
+	ctrl := controller.New(client)
+	go func() {
+		defer cancel()
+		ctrl.Start(ctx)
+	}()
 
 	slog.Info("Running...")
-
-	<-instanceWatcher.Done()
+	<-ctx.Done()
 }

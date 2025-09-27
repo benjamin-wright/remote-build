@@ -10,6 +10,9 @@ cluster:
 		--kubeconfig-update-default=false \
 		--wait
 	k3d kubeconfig get remote-build > ./.scratch/kubeconfig
+	kubectl apply -f ./crds --kubeconfig=./.scratch/kubeconfig
+	# wait for the CRDs to be established
+	kubectl wait --for=condition=established --timeout=60s crd/buildinstances.remote-build.pongle-hub.co.uk --kubeconfig=./.scratch/kubeconfig
 
 .PHONY: clean
 clean:

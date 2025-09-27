@@ -3,7 +3,8 @@ package k8s
 import (
 	"fmt"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
@@ -43,16 +44,29 @@ func nestedBool(m map[string]any, fields ...string) bool {
 	return value
 }
 
-func getID(obj any) string {
+func getLogMeta(obj any) []any {
 	switch o := obj.(type) {
 	case *unstructured.Unstructured:
-		metadata := o.Object["metadata"].(map[string]any)
-		return fmt.Sprintf("%s/%s", metadata["namespace"], metadata["name"])
-	case metav1.ObjectMeta:
-		return fmt.Sprintf("%s/%s", o.Namespace, o.Name)
-	case *metav1.ObjectMeta:
-		return fmt.Sprintf("%s/%s", o.Namespace, o.Name)
+		return []any{
+			"name", o.GetName(),
+			"namespace", o.GetNamespace(),
+			"type", "BuildInstance",
+		}
+	case *v1.Service:
+		return []any{
+			"name", o.Name,
+			"namespace", o.Namespace,
+			"type", "Service",
+		}
+	case *appsv1.StatefulSet:
+		return []any{
+			"name", o.Name,
+			"namespace", o.Namespace,
+			"type", "StatefulSet",
+		}
+	default:
+		return []any{
+			"type", "unknown",
+		}
 	}
-
-	return "unknown"
 }

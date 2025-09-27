@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: remote-build
 spec:
-  cpu: "1"
-  memory: "256Mi"
-  disk: "5Gi"
+  cpu: "500m"
+  memory: "128Mi"
+  disk: "1Gi"
   image: "moby/buildkit:master-rootless"

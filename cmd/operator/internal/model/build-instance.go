@@ -14,3 +14,7 @@ type BuildInstance struct {
 func (b BuildInstance) Equal(old BuildInstance) bool {
 	return b == old
 }
+
+func (b BuildInstance) ID() string {
+	return b.Namespace + "/" + b.Name
+}

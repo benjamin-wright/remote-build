@@ -1,0 +1,33 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-operator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - list
+      - watch
+      - create
+      - patch
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - list
+      - watch
+      - create
+      - patch
+      - delete
+  - apiGroups:
+      - remote-build.pongle-hub.co.uk
+    resources:
+      - buildinstances
+      - buildinstances/status
+    verbs:
+      - list
+      - watch
