@@ -19,6 +19,13 @@ func (s StatefulSet) Equal(old StatefulSet) bool {
 		s.Image == old.Image
 }
 
+func (s StatefulSet) NeedsUpdate(old StatefulSet) bool {
+	return s.CPU != old.CPU ||
+		s.Memory != old.Memory ||
+		s.Disk != old.Disk ||
+		s.Image != old.Image
+}
+
 func (s StatefulSet) ID() string {
 	return s.Namespace + "/" + s.Name
 }

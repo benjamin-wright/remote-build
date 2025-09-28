@@ -159,7 +159,7 @@ func (c *Controller) reconcileStatefulSets() []*actions.ActionNode {
 		}
 
 		// Replace this equals with an invalidation-only version, so that we can separate "needs to update the store" from "needs to update k8s"
-		if !existing.Equal(*desired) {
+		if existing.NeedsUpdate(*desired) {
 			nodes = append(nodes, &actions.ActionNode{
 				Action: actions.Action{
 					Name: "Delete StatefulSet " + id,
